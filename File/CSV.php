@@ -281,7 +281,7 @@ class File_CSV
                 $in_quote = true;
                 // excel compat, removing the = part but only if we are in a quote
                 if ($prev == '=') {
-                    $buff{strlen($buff) - 1} = '';
+                    $buff[strlen($buff) - 1] = '';
                 }
             }
 
