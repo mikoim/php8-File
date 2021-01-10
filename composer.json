@@ -1,0 +1,17 @@
+{
+    "name": "pear/file",
+    "description": "Fork of https://svn.php.net/viewvc/pear/packages/File/trunk/",
+    "homepage": "https://github.com/mikoim/php8-File_Util",
+    "autoload": {
+        "classmap": ["/"]
+    },
+    "include-path": ["/"],
+    "license": "PHP-3.01",
+    "type": "library",
+    "require": {
+    },
+    "require-dev": {
+    },
+    "suggest": {
+    }
+}
