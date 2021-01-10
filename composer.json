@@ -1,17 +1,48 @@
 {
-    "name": "pear/file",
-    "description": "Fork of https://svn.php.net/viewvc/pear/packages/File/trunk/",
-    "homepage": "https://github.com/mikoim/php8-File_Util",
-    "autoload": {
-        "classmap": ["/"]
+  "name": "pear/file",
+  "description": "Fork of https://svn.php.net/viewvc/pear/packages/File/trunk/",
+  "homepage": "https://github.com/mikoim/php8-File_Util",
+  "license": [
+    "PHP-3.0",
+    "BSD-2-Clause"
+  ],
+  "authors": [
+    {
+      "name": "Richard Heyes",
+      "email": "richard@php.net"
     },
-    "include-path": ["/"],
-    "license": "PHP-3.01",
-    "type": "library",
-    "require": {
+    {
+      "name": "Tal Peer",
+      "email": "tal@php.net"
     },
-    "require-dev": {
+    {
+      "name": "Michael Wallner",
+      "email": "mike@php.net"
     },
-    "suggest": {
+    {
+      "name": "Helgi Þormar Þorbjörnsson",
+      "email": "helgi@php.net"
+    },
+    {
+      "name": "Tomas V.V. Cox",
+      "email": "cox@idecnet.com"
+    },
+    {
+      "name": "Cipriano Groenendal",
+      "email": "cipri@php.net"
     }
+  ],
+  "autoload": {
+    "classmap": [
+      "."
+    ]
+  },
+  "include-path": [
+    "."
+  ],
+  "type": "library",
+  "require": {
+    "php": ">=7.4",
+    "pear/pear-core-minimal": "1.*"
+  }
 }

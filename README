@@ -1,0 +1,14 @@
+
+```json
+{
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/mikoim/php8-File.git"
+    }
+  ],
+  "require": {
+    "pear/file": "dev-master"
+  },
+}
+```

@@ -1,6 +1,6 @@
 <?php
 // needed for locking test
-define('FILE_LOCKS_BLOCK', false, true);
+define('FILE_LOCKS_BLOCK', false);
 require_once 'File.php';
 
 require_once dirname(__FILE__) . '/teardown.inc.php';

@@ -84,7 +84,7 @@ class File_CSV
     * @param string $error The error message
     * @return bool always false
     */
-    function raiseError($error)
+    static function raiseError($error)
     {
         // If a default PEAR Error handler is not set trigger the error
         // XXX Add a PEAR::isSetHandler() method?
@@ -104,7 +104,7 @@ class File_CSV
     * @param array  &$conf  The configuration assoc array
     * @return string error    Returns a error message
     */
-    function _conf(&$error, &$conf)
+    static function _conf(&$error, &$conf)
     {
         // check conf
         if (!is_array($conf)) {
@@ -154,7 +154,7 @@ class File_CSV
     *
     * @return mixed A file resource or false
     */
-    function getPointer($file, &$conf, $mode = FILE_MODE_READ, $reset = false)
+    static function getPointer($file, &$conf, $mode = FILE_MODE_READ, $reset = false)
     {
         static $resources = array();
         if (isset($resources[$file][$mode])) {
@@ -188,7 +188,7 @@ class File_CSV
      * @param string $quote The quote char
      * @return string the unquoted data
      */
-    function unquote($data, $quote)
+    static function unquote($data, $quote)
     {
         $isString = false;
         if (!is_array($data)) {
@@ -244,7 +244,7 @@ class File_CSV
     *
     * @return mixed Array with the data read or false on error/no more data
     */
-    function readQuoted($file, &$conf)
+    static function readQuoted($file, &$conf)
     {
         if (!$fp = File_CSV::getPointer($file, $conf, FILE_MODE_READ)) {
             return false;
@@ -281,7 +281,7 @@ class File_CSV
                 $in_quote = true;
                 // excel compat, removing the = part but only if we are in a quote
                 if ($prev == '=') {
-                    $buff[strlen($buff) - 1] = '';
+                    $buff = substr($buff, 0, -1);
                 }
             }
 
@@ -371,7 +371,7 @@ class File_CSV
      * @access private
      * @return array | boolean returns false if no data should return out.
      */
-    function _readQuotedFillers($fp, $f, $fields, $ret, $buff, $quote, &$c, $sep)
+    static function _readQuotedFillers($fp, $f, $fields, $ret, $buff, $quote, &$c, $sep)
     {
         // More fields than expected
         if ($c == $sep && (count($ret) + 1) === $f) {
@@ -414,7 +414,7 @@ class File_CSV
     *
     * @return mixed Array or false
     */
-    function read($file, &$conf)
+    static function read($file, &$conf)
     {
         if (!$fp = File_CSV::getPointer($file, $conf, FILE_MODE_READ)) {
             return false;
@@ -444,7 +444,7 @@ class File_CSV
         if (
             $field_count !== $conf['fields'] || $conf['quote']
             && (
-                $last !== ''
+                !is_null($last) && $last !== ''
                 && (
                     ($last[0] === $conf['quote'] && $last[strlen(rtrim($last)) - 1] !== $conf['quote'])
                     // excel support
@@ -485,7 +485,7 @@ class File_CSV
      *
      * @return array Processed array
      */
-    function _processHeaders($fields, &$conf)
+    static function _processHeaders($fields, &$conf)
     {
         static $headers = array();
 
@@ -514,7 +514,7 @@ class File_CSV
     * @param string $str The string to debug
     * @access private
     */
-    function _dbgBuff($str)
+    static function _dbgBuff($str)
     {
         if (strpos($str, "\r") !== false) {
             $str = str_replace("\r", "_r_", $str);
@@ -543,7 +543,7 @@ class File_CSV
     *
     * @return bool True on success false otherwise
     */
-    function write($file, $fields, &$conf)
+    static function write($file, $fields, &$conf)
     {
         if (!$fp = File_CSV::getPointer($file, $conf, FILE_MODE_WRITE)) {
             return false;
@@ -609,7 +609,7 @@ class File_CSV
     * @param array extra separators that should be checked for.
     * @return mixed Assoc array or false
     */
-    function discoverFormat($file, $extraSeps = array())
+    static function discoverFormat($file, $extraSeps = array())
     {
         if (!$fp = @fopen($file, 'rb')) {
             return File_CSV::raiseError("Could not open file: $file");
@@ -675,22 +675,13 @@ class File_CSV
         $final = array();
         // Group the results by amount of equal ocurrences
         foreach ($matches as $sep => $res) {
-            $times = array();
-            $times[0] = 0;
-            foreach ($res as $k => $num) {
-                if ($num > 0) {
-                    $times[$num] = isset($times[$num]) ? $times[$num] + $num : 1;
-                }
-            }
-            arsort($times);
-
             // Use max fields count.
-            $fields[$sep] = max(array_flip($times));
-            $amount[$sep] = $times[key($times)];
+            $fields[$sep] = $res[0];
+            $amount[$sep] = array_sum($res);
         }
 
         arsort($amount);
-        $sep = key($amount);
+        $sep = array_sum(array_values($amount)) == 0 ? array_key_last($amount) : key($amount);
 
         $conf['fields'] = $fields[$sep] + 1;
         $conf['sep']    = $sep;
@@ -733,7 +724,7 @@ class File_CSV
      *
      * @return boolean true on success false on failure
      */
-    function resetPointer($file, &$conf, $mode)
+    static function resetPointer($file, &$conf, $mode)
     {
         if (!File_CSV::getPointer($file, $conf, $mode, true)) {
             return false;
